@@ -1,13 +1,101 @@
 <!DOCTYPE html>
+<html lang="id">
 <head>
-    <link rel="icon" type="image/x-icon" href="https://i.imgur.com/X7JsAjB.png">
+  <title>Burhan Shop — Football Store</title>
+  <style>
+
+    *,*::before,*::after{box-sizing:border-box}
+    body{
+      margin:0; font-family:sans-serif; color:#fff;
+      background:
+        radial-gradient(1200px 800px at 10% -10%, #2a47ff30, transparent 60%),
+        radial-gradient(900px 700px at 110% 110%, #ff235330, transparent 55%),
+        linear-gradient(135deg,#0f1026,#141a33);
+      background-attachment:fixed;
+    }
+    :root{
+      --glass-bg:rgba(255,255,255,.08);
+      --glass-bd:1px solid rgba(255,255,255,.18);
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    .glass{
+      background:var(--glass-bg);
+      border:var(--glass-bd);
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(14px) saturate(130%);
+      -webkit-backdrop-filter:blur(14px) saturate(130%);
+    }
+    .container{width:min(1100px,92vw);margin-inline:auto}
+    .btn{
+      display:inline-block;padding:.8rem 1.1rem;border-radius:14px;
+      text-decoration:none;color:#fff;font-weight:600;
+      background:linear-gradient(145deg,#27d19a,#168d65);
+    }
+
+    header{position:sticky;top:0;z-index:10}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff}
+    .brand img{width:40px;height:40px;border-radius:8px}
+    .brand strong{font-size:1.1rem}
+
+    .hero{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;padding:40px 0}
+    .hero-text h1{font-size:2.4rem;margin:0 0 10px}
+    .hero-text p{color:#ddd;margin:0 0 20px}
+    .hero-art{display:grid;place-items:center;min-height:220px}
+    .ball{
+      width:150px;aspect-ratio:1;border-radius:50%;
+      background:radial-gradient(circle at 35% 35%,#fff,#dfe8ff 40%,#b5c2ff 65%,#6e7cff 85%,#2b3bff 100%);
+      position:relative;box-shadow:inset 0 -12px 30px #0005,0 18px 40px #0006;
+    }
+    .ball::after{
+      content:"⚽";position:absolute;inset:0;display:grid;place-items:center;
+      font-size:64px;filter:drop-shadow(0 6px 12px rgba(0,0,0,.35));
+    }
+    @media(max-width:800px){.hero{grid-template-columns:1fr}}
+
+    footer{padding:20px 0;color:#bbb;font-size:.9rem}
+    footer .box{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:14px}
+    footer img{width:28px;height:28px;border-radius:7px;margin-right:8px}
+  </style>
 </head>
-<html>
-    <h1>Football News</h1>
-    <h5>NPM: </h5>
-    <p>{{ npm }}</p>
-    <h5>Name: </h5>
-    <p>{{ name }}<p>
-    <h5>Class: </h5>
-    <p>{{ class }}</p>
+<body>
+
+  <header class="glass">
+    <div class="container nav">
+      <a class="brand" href="#">
+        <img src="https://i.gyazo.com/5eee0d5d04d129914d0cecb593bbc9fa.png" alt="Logo Burhan Shop">
+        <strong>Burhan Shop</strong>
+      </a>
+      <a class="btn" href="#hero">Belanja Sekarang</a>
+    </div>
+  </header>
+
+
+  <main class="container hero" id="hero">
+    <div class="hero-text glass" style="padding:20px">
+      <h1>Gear Bola Terbaik ⚽</h1>
+      <p>Temukan jersey, sepatu, bola, dan perlengkapan sepakbola berkualitas hanya di Burhan Shop.</p>
+      <a class="btn" href="#footer">Lihat Info</a>
+    </div>
+    <div class="hero-art glass">
+      <div class="ball"></div>
+    </div>
+  </main>
+
+
+  <footer id="footer">
+    <div class="container glass box">
+      <div style="display:flex;align-items:center">
+        <img src="https://i.gyazo.com/5eee0d5d04d129914d0cecb593bbc9fa.png" alt="Logo">
+        <span>© <span id="year"></span> Burhan Shop</span>
+      </div>
+      <span>{{ name }} || {{ npm }} || {{ class }}</span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent=new Date().getFullYear();
+  </script>
+</body>
 </html>
