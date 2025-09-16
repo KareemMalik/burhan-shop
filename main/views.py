@@ -47,17 +47,17 @@ def show_json(request):
     json_data = serializers.serialize("json", product_list)
     return HttpResponse(json_data, content_type="application/json")
 
-def show_xml_by_id(request, product_id):
+def show_xml_by_id(request, id):
    try:
-       product_item = Product.objects.filter(pk=product_id)
+       product_item = Product.objects.filter(pk=id)
        xml_data = serializers.serialize("xml", product_item)
        return HttpResponse(xml_data, content_type="application/xml")
    except Product.DoesNotExist:
        return HttpResponse(status=404)
    
-def show_json_by_id(request, product_id):
+def show_json_by_id(request, id):
    try:
-       product_item = Product.objects.get(pk=product_id)
+       product_item = Product.objects.get(pk=id)
        json_data = serializers.serialize("json", [product_item])
        return HttpResponse(json_data, content_type="application/json")
    except Product.DoesNotExist:
