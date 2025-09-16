@@ -13,6 +13,7 @@ class Product(models.Model):
     ]
 
     name = models.CharField(max_length=255, null=True, blank=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     price = models.IntegerField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     thumbnail = models.URLField(blank=True, null=True)
