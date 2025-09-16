@@ -4,8 +4,8 @@
 
 <h1>{{ product.name }}</h1>
 <p><b>{{ product.get_category_display }}</b>{% if product.is_featured %} | 
-    <b>Featured</b>{% endif %} | <b> Size: {{ product.size }} </b> | Views: {{ product.product_views }} | Stock: {{ product.stock }} | </p>
-    
+    <b>Featured</b>{% endif %} | <b> Size: {{ product.size }} </b>| <b> Price: Rp{{ product.price }}</b> | Views: {{ product.product_views }} | Stock: {{ product.stock }} | </p>
+
 {% if product.thumbnail %}
 <img src="{{ product.thumbnail }}" alt="Product thumbnail" width="300">
 <br /><br />
