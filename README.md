@@ -1,25 +1,51 @@
-Tautan menuju aplikasi yang sudah di deploy: https://malik-alifan-burhanshop.pbp.cs.ui.ac.id/
+# Burhan Shop — Football Shop
+
+No. 1 Football Shop in FASILKOM UI
+
+### 🪁 Deployment 
+Click Here: [Burhan Shop](https://malik-alifan-burhanshop.pbp.cs.ui.ac.id/)
+
+### 📚 Assignment Archive
+* [Tugas 2: Implementasi Model-View-Template (MVT) pada Django](https://github.com/KareemMalik/burhan-shop/wiki/Tugas-2:-Implementasi-Model%E2%80%90View%E2%80%90Template-(MVT)-pada-Django)
+* [Tugas 3: Implementasi Form dan Data Delivery pada Django](https://github.com/KareemMalik/burhan-shop/wiki/Tugas-3:-Implementasi-Form-dan-Data-Delivery-pada-Django)
 
 
-1. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step
-- Pertama, buatlah folder proyek, aktifkan virtual environment, susun requirements.txt, lalu inisialisasi Git dan buat .gitignore agar file sensitif seperti .env dan db.sqlite3 tidak tercommit. 
-- Selanjutnya, buat proyek Django dengan django-admin startproject football_shop . , kemudian buat file .env (development) dan .env.prod (production) serta muat variabelnya di settings.py menggunakan python-dotenv.
-- Setelah itu, buat aplikasi main, daftarkan di INSTALLED_APPS, dan definisikan model Product dengan enam atribut wajib (name, price, description, thumbnail, category, is_featured), lalu jalankan makemigrations dan migrate. 
-- Implementasikan MVT dasar: sebuah view show_main yang me-render template main.html berisi nama aplikasi serta nama dan kelas; petakan rute di main/urls.py dan gabungkan ke burhan_shop/urls.py dengan include. 
-- Uji lokal lewat runserver, kemudian buat repo GitHub publik, hubungkan remote, dan push. Terakhir, buat proyek di PWS, copy isi .env.prod ke Environs, tambahkan URL PWS ke ALLOWED_HOSTS, jalankan perintah “Project Command” awal dari PWS, dan untuk berikutnya tinggal melakukan git push pws master dan git push origin master.
-    
-2. Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html.
-![Diagram Django](image.png)
-Diagram tersebut menjelaskan alur kerja arsitektur MTV pada Django. Proses dimulai ketika sebuah permintaan HTTP (HTTP Request) masuk dan diterima oleh file URLs (urls.py), yang kemudian meneruskannya ke View (views.py) yang sesuai. View, yang berisi logika, akan berinteraksi dengan Model (models.py) untuk mengakses atau memanipulasi data dari database. Setelah itu, View akan mengirimkan data tersebut ke Template (.html) untuk diolah menjadi halaman yang akan ditampilkan. Hasil akhirnya kemudian dikirim kembali ke pengguna sebagai sebuah respons HTTP (HTTP Response) dalam format HTML.
+***
 
-3. Jelaskan peran settings.py dalam proyek Django!
-settings.py adalah file utama yang mengatur semua pengaturan di proyek Django. Di dalamnya ada banyak hal penting, seperti daftar aplikasi yang dipakai (INSTALLED_APPS), pengaturan database, alamat host yang diizinkan (ALLOWED_HOSTS), sampai kunci rahasia (SECRET_KEY). File ini juga dipakai untuk memisahkan pengaturan saat kita bekerja di komputer sendiri (development) dan saat aplikasi sudah dijalankan di server (production). 
+## Tugas 3: Implementasi Form dan Data Delivery pada Django
 
-4. Bagaimana cara kerja migrasi database di Django?
-Migrasi database di Django adalah cara untuk menyesuaikan struktur database dengan model yang kita buat di kode. Saat kita menambahkan atau mengubah model, Django tidak langsung mengubah database. Pertama, kita harus menjalankan perintah python manage.py makemigrations. Perintah ini membuat file migrasi, yaitu instruksi perubahan struktur database sesuai model terbaru. Setelah itu, kita jalankan python manage.py migrate untuk benar-benar menerapkan perubahan ke database. 
+### Langkah - langkah implementasi
+1. Membuat file `base.html` sebagai template dasar untuk menjaga konsistensi tampilan dan menghindari pengulangan kode
+2. Menyiapkan form input data barang (`forms.py`) agar pengguna dapat menambahkan konten baru ke dalam aplikasi melalui halaman web.
+3. Mengambil semua data produk dari database dan menampilkannya di halaman utama. Setiap produk memiliki tombol "Read More" untuk melihat detail lengkapnya di halaman terpisah (`product_detail`).
+4. Membuat fungsi dan URL khusus untuk mengubah data produk dari database menjadi format XML dan JSON (`show_xml` dan `show_json`). 
+5. Menambahkan fungsi untuk mengambil dan menampilkan satu data produk spesifik dalam format XML atau JSON berdasarkan ID uniknya (`show_xml_by_id` dan `show_json_by_id`).
+6. Membuat routing url dengan menambahkan 4 path fungsi pada `urls.py` di direktori `main`. 
 
-5. Menurut Anda, dari semua framework yang ada, mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?
-Menurut saya, framework Django dijadikan permulaan peblejaran pengembangan perangkat lunak karena Django menggunakan arsitektur Model-View-Template (MVT) memisahkan data, logika, dan tampilan, sehingga alur kerja aplikasi web lebih mudah dipahami.
 
-6. Apakah ada feedback untuk asisten dosen tutorial 1 yang telah kamu kerjakan sebelumnya?
-Asisten dosen sangat membantu dalam pengerjaan tutorial 1. Asisten dosen mampu membantu ketika terjadi error error yang membingungkan.
+### Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+Kita memerlukan data delivery dalam pengimplementasian sebuah platform karena data yang disediakan backend tidak hanya digunakan oleh satu interface saja, melainkan harus bisa diakses oleh berbagai macam klien seperti web, mobile, atau layanan pihak ketiga. Dengan adanya data delivery menggunakan format standar seperti JSON atau XML, platform menjadi lebih fleksibel serta mudah diintegrasikan. Selain itu, data delivery memungkinkan pemisahan antara logika bisnis dan tampilan, sehingga kode lebih rapi dan mudah dimaintain. Dari sisi pengembangan, mekanisme ini juga memudahkan proses debugging, pengujian dengan tools seperti Postman, serta mendukung skalabilitas melalui caching, pagination, atau filtering.
+
+### Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+Menurut saya, JSON lebih baik dibandingkan XML terutama dalam konteks pengembangan web modern karena formatnya lebih ringkas, mudah dibaca manusia, dan langsung dapat diproses oleh JavaScript tanpa perlu parsing yang rumit. JSON juga menggunakan struktur data berupa objek dan array yang sangat sesuai dengan gaya pemrograman berorientasi objek maupun pemrograman berbasis data saat ini. Di sisi lain, XML memang memiliki kelebihan seperti dukungan untuk skema dan validasi data yang lebih kompleks, tetapi kelemahannya adalah banyak tag pembuka dan penutup sehingga ukuran data menjadi lebih besar dan sulit dibaca.
+
+### Jelaskan fungsi dari method `is_valid()` pada form Django dan mengapa kita membutuhkan method tersebut?
+Fungsi `is_valid()` pada form Django digunakan untuk memeriksa apakah data yang dikirim melalui form sudah sesuai dengan aturan validasi yang didefinisikan, baik dari sisi tipe data, panjang input, maupun constraint lain. Kita membutuhkan method ini agar data yang masuk ke database terjamin kebersihannya, mencegah error, serta menghindari potensi celah keamanan akibat input yang tidak valid.
+
+### Mengapa kita membutuhkan `csrf_token` saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan `csrf_token` pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
+Kita membutuhkan `csrf_token` karena ia mencegah serangan CSRF (Cross-Site Request Forgery) yaitu ketika penyerang membuat halaman/skrip di domain lain yang secara otomatis mengirim permintaan (misal POST) ke situs kita memakai kredensial korban (cookie/session) sehingga korban tanpa sadar melakukan aksi seperti mengubah data atau transaksi; tanpa `csrf_token` server tidak bisa membedakan permintaan sah dari permintaan palsu. `csrf_token` bekerja sebagai nilai acak yang diikat ke sesi/ cookie dan harus dikirim ulang di form (hidden input) atau header; server memverifikasi kecocokan token itu sebelum memproses aksi yang mengubah state.
+
+### Feedback Asdos
+Asdos sangat membantu ketika selama berjalannya tutorial. Asdos mampu menjawab semua pertanyaan yang saya miliki dan sangat membantu ketika terjadi error di kode saya.
+
+### Screenshot Hasil Akses URL pada Postman
+
+XML & JSON
+[![XML](https://i.gyazo.com/f636de9bdcd585f7a0e49935bbceb0b9.png)](https://gyazo.com/f636de9bdcd585f7a0e49935bbceb0b9)
+
+[![JSON](https://i.gyazo.com/833ac3864409e1ac2e056c3206fc27e6.png)](https://gyazo.com/833ac3864409e1ac2e056c3206fc27e6)
+
+XML & JSON by ID
+[![XML by ID](https://i.gyazo.com/021f759548ffcf805c88e05c5f7fd29b.png)](https://gyazo.com/021f759548ffcf805c88e05c5f7fd29b)
+
+[![JSON by ID](https://i.gyazo.com/a8697f4ff404fe1ec202a613943b7efb.png)](https://gyazo.com/a8697f4ff404fe1ec202a613943b7efb)
