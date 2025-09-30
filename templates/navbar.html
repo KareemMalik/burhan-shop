@@ -1,0 +1,64 @@
+<nav class="sticky top-0 z-50 w-full bg-white/10 backdrop-blur-md border border-white/20 shadow-lg">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-20">
+      
+      <div class="flex-shrink-0">
+        <div class="flex items-center gap-3">
+          <img src="https://i.gyazo.com/5eee0d5d04d129914d0cecb593bbc9fa.png" alt="Burhan Shop Logo" class="w-10 h-10 rounded-lg shadow-md">
+          <h1 class="text-2xl font-bold text-white drop-shadow">Burhan Shop</h1>
+        </div>
+      </div>
+
+      <div class="hidden md:block">
+        <ul class="ml-10 flex items-baseline space-x-8 text-white font-medium text-lg">
+          <li><a href="/" class="hover:text-green-300 transition">Home</a></li>
+          <li><a href="{% url 'main:create_product' %}" class="hover:text-green-300 transition">Create Product</a></li>
+        </ul>
+      </div>
+
+      <div class="hidden md:flex items-center gap-4 text-white">
+        <div class="flex flex-col text-right">
+          <span class="font-semibold">{{ request.user.username }}</span>
+          <span class="text-sm opacity-80">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</span>
+        </div>
+        <a href="{% url 'main:logout' %}" class="px-3 py-1 rounded-lg bg-green-600 hover:bg-green-700 text-white transition">Logout</a>
+      </div>
+
+      <div class="-mr-2 flex md:hidden">
+        <button type="button" class="mobile-menu-button inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-white/20 focus:outline-none">
+          <span class="sr-only">Open main menu</span>
+          <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="mobile-menu hidden md:hidden">
+    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-white/20">
+      <a href="/" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-white/20">Home</a>
+      <a href="{% url 'main:create_product' %}" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-white/20">Create Product</a>
+    </div>
+    <div class="pt-4 pb-3 border-t border-white/20">
+      <div class="flex items-center justify-between px-5">
+        <div class="text-left">
+          <div class="text-base font-medium leading-none text-white">{{ request.user.username }}</div>
+          <div class="text-sm font-medium leading-none text-gray-300">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
+        </div>
+        <a href="{% url 'main:logout' %}" 
+          class="flex-shrink-0 px-3 py-1.5 rounded-lg text-sm bg-green-600 hover:bg-green-700 text-white transition">
+          Logout
+        </a>
+      </div>
+    </div>
+    <script>
+        const btn = document.querySelector("button.mobile-menu-button");
+        const menu = document.querySelector(".mobile-menu");
+      
+        btn.addEventListener("click", () => {
+          menu.classList.toggle("hidden");
+        });
+    </script>
+  </nav>

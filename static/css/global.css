@@ -1,0 +1,37 @@
+.backdrop-blur-md form input,
+.backdrop-blur-md form select,
+.backdrop-blur-md form textarea {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    outline: none;
+    transition: box-shadow .2s, border-color .2s, background .2s;
+}
+.backdrop-blur-md form input[type="file"] {
+    padding: 0.6rem; background: rgba(255,255,255,0.06);
+}
+.backdrop-blur-md form input::placeholder,
+.backdrop-blur-md form textarea::placeholder { color: rgba(255,255,255,0.65); }
+.backdrop-blur-md form input:focus,
+.backdrop-blur-md form select:focus,
+.backdrop-blur-md form textarea:focus {
+    border-color: rgba(52,211,153,0.7); 
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 0 0 4px rgba(16,185,129,0.25);
+}
+.backdrop-blur-md table td:first-child {
+    color: rgba(255,255,255,0.9);
+    font-weight: 600;
+    padding-right: .5rem;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.backdrop-blur-md table td:last-child { width: 100%; }
+
+.backdrop-blur-md form select option {
+    background: #1e293b; 
+    color: #fff;
+}

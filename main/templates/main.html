@@ -1,59 +1,129 @@
- {% extends 'base.html' %}
- {% block content %}
-<h1>Burhan Shop</h1>
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
 
-<h5>NPM: </h5>
-<p>{{ npm }}</p>
+{% include 'navbar.html' %}
 
-<h5>Name:</h5>
-<p>{{ request.user.username }}</p>
+<div class="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-8">
 
-<h5>Class:</h5>
-<p>{{ class }}</p>
+  <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl p-6 mb-6">
+    <div class="flex items-center gap-4">
+      <img src="https://i.gyazo.com/5eee0d5d04d129914d0cecb593bbc9fa.png" alt="Burhan Shop" class="w-12 h-12 rounded-lg shadow-md"> 
+      <div>
+        <h1 class="text-3xl font-bold">Burhan Shop</h1>
+        <p class="text-white/70">Tempatnya merchandise bola kece & orisinal.</p>
+      </div>
+    </div>
 
-<a href="{% url 'main:create_product' %}">
-  <button>+ Add Product</button>
-</a>
+    <div class="grid sm:grid-cols-3 gap-4 mt-6 text-sm">
+      <div class="bg-white/5 border border-white/10 rounded-xl p-4">
+        <h5 class="font-semibold text-white/90">NPM</h5>
+        <p class="text-white/80 break-words">{{ npm }}</p>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-xl p-4">
+        <h5 class="font-semibold text-white/90">Name</h5>
+        <p class="text-white/80">{{ request.user.username }}</p>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-xl p-4">
+        <h5 class="font-semibold text-white/90">Class</h5>
+        <p class="text-white/80">{{ class }}</p>
+      </div>
+    </div>
 
-<a href="{% url 'main:logout' %}">
-  <button>Logout</button>
-</a>
+    <div class="flex flex-wrap items-center gap-3 mt-6">
+      <a href="{% url 'main:create_product' %}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl
+         bg-emerald-500/90 hover:bg-emerald-500 transition shadow-lg shadow-emerald-900/30">
+        <span class="text-sm font-semibold">+ Add Product</span>
+      </a>
 
-<h5>Sesi terakhir login: {{ last_login }}</h5>
+      <a href="{% url 'main:logout' %}" class="inline-flex px-4 py-2 rounded-xl
+         bg-white/10 hover:bg-white/20 border border-white/20 transition">
+        <span class="text-sm font-semibold">Logout</span>
+      </a>
 
-<a href="?filter=all">
-    <button type="button">All Products</button>
-</a>
+      <span class="ml-auto text-white/70 text-sm">Sesi terakhir login: {{ last_login }}</span>
+    </div>
 
-<a href="?filter=my">
-    <button type="button">My Products</button>
-</a> 
 
-<hr>
+    <div class="mt-6 flex flex-wrap gap-3">
+      <a href="?filter=all" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition">
+        All Products
+      </a>
+      <a href="?filter=my" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition">
+        My Products
+      </a>
+    </div>
+  </div>
 
-{% if not product_list %}
-<p>Belum ada produk pada Burhan Shop.</p>
-{% else %}
+  {% if not product_list %}
+    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl p-10 text-center flex flex-col items-center justify-center">
+        <img src="{% static 'image/no-news.png' %}" alt="No Products Yet" class="w-32 h-32 mb-6 opacity-70">
+        <p class="text-white/80 text-lg mb-4">Belum ada produk pada Burhan Shop.</p>
+        <a href="{% url 'main:create_product' %}" class="inline-block mt-4 px-6 py-3 rounded-xl
+            bg-emerald-500/90 hover:bg-emerald-500 transition shadow-lg shadow-emerald-900/30 text-white font-semibold">
+            Tambah Produk Pertama
+        </a>
+    </div>
+  {% else %}
 
-{% for product in product_list %}
-<div>
-  <h2><a href="{% url 'main:show_product' product.id %}">{{ product.name }}</a></h2>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {% for product in product_list %}
+      <div class="group bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl p-5
+                  hover:-translate-y-1 hover:shadow-2xl transition">
+        <a href="{% url 'main:show_product' product.id %}">
+          <h2 class="text-xl font-bold mb-2 group-hover:text-emerald-300 transition">
+            {{ product.name }}
+          </h2>
+        </a>
 
-  <p><b>{{ product.get_category_display }}</b>{% if product.is_featured %} | 
-    <b>Featured</b>{% endif %} | <b> Size: {{ product.size }} </b>| <b> Price: Rp{{ product.price }}</b> | Views: {{ product.product_views }} | Stock: {{ product.stock }} | </p>
+        <p class="text-sm text-white/80">
+          <b>{{ product.get_category_display }}</b>
+          {% if product.is_featured %} | <b class="text-amber-300">Featured</b>{% endif %}
+          | <b>Size: {{ product.size }}</b>
+          | <b>Price: Rp{{ product.price }}</b>
+          | Views: {{ product.product_views }}
+          | Stock: {{ product.stock }}
+        </p>
 
-  {% if product.thumbnail %}
-  <img src="{{ product.thumbnail }}" alt="thumbnail" width="150" height="200">
-  <br />
+        {% if product.thumbnail %}
+          <div class="mt-4 overflow-hidden rounded-xl border border-white/20 bg-white/5">
+            <img src="{{ product.thumbnail }}" alt="thumbnail"
+                 class="w-full h-48 object-cover group-hover:scale-[1.02] transition">
+          </div>
+        {% endif %}
+
+        <p class="mt-4 text-white/80">
+          {{ product.description|truncatewords:25 }}...
+        </p>
+
+        {% if user.is_authenticated and product.user == user %}
+        <div class="mt-5 flex flex-wrap gap-3">
+          <a href="{% url 'main:show_product' product.id %}"
+             class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition">
+            Read More
+          </a>
+          <a href="{% url 'main:edit_product' product.pk %}"
+             class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition">
+            Edit
+          </a>
+          <a href="{% url 'main:delete_product' product.pk %}"
+             class="px-4 py-2 rounded-xl bg-red-500/80 hover:bg-red-500 text-white transition">
+            Delete
+          </a>
+        </div>
+        {% else %}
+        <div class="mt-5 flex flex-wrap gap-3">
+          <a href="{% url 'main:show_product' product.id %}"
+             class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition">
+            Read More
+          </a>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
   {% endif %}
-
-  <p>{{ product.description|truncatewords:25 }}...</p>
-
-  <p><a href="{% url 'main:show_product' product.id %}"><button>Read More</button></a></p>
 </div>
 
-<hr>
-{% endfor %}
-
-{% endif %}
 {% endblock content %}

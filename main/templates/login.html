@@ -5,28 +5,47 @@
 {% endblock meta %}
 
 {% block content %}
-<div class="login">
-  <h1>Login</h1>
+<div class="min-h-[70vh] flex items-center justify-center px-4 py-10">
+  <div class="w-full max-w-md bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-6">
 
-  <form method="POST" action="">
-    {% csrf_token %}
-    <table>
-      {{ form.as_table }}
-      <tr>
-        <td></td>
-        <td><input class="btn login_btn" type="submit" value="Login" /></td>
-      </tr>
-    </table>
-  </form>
+    <h1 class="text-3xl font-bold mb-2">Login</h1>
+    <p class="text-white/70 mb-6">Masuk ke akun Burhan Shop kamu.</p>
 
-  {% if messages %}
-  <ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %} Don't have an account yet?
-  <a href="{% url 'main:register' %}">Register Now</a>
+    <form method="POST" action="" class="space-y-4">
+      {% csrf_token %}
+
+      <table class="w-full border-separate [border-spacing:0.75rem_0.75rem]">
+        {{ form.as_table }}
+        <tr>
+          <td></td>
+          <td>
+            <button type="submit"
+              class="w-full mt-2 px-4 py-2 rounded-xl bg-emerald-500/90 hover:bg-emerald-500
+                     text-white font-semibold shadow-lg shadow-emerald-900/30 transition">
+              Login
+            </button>
+          </td>
+        </tr>
+      </table>
+    </form>
+
+    {% if messages %}
+      <ul class="mt-6 space-y-2">
+        {% for message in messages %}
+          <li class="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-sm text-white/90">
+            {{ message }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <div class="mt-6 text-sm text-white/70">
+      Don’t have an account yet?
+      <a href="{% url 'main:register' %}" class="text-emerald-300 hover:text-emerald-200 underline underline-offset-4">
+        Register Now
+      </a>
+    </div>
+  </div>
 </div>
 
 {% endblock content %}
