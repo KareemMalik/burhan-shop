@@ -6,15 +6,17 @@
 
 <div class="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-8">
 
+  <!-- Header Card -->
   <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl p-6 mb-6">
     <div class="flex items-center gap-4">
-      <img src="https://i.gyazo.com/5eee0d5d04d129914d0cecb593bbc9fa.png" alt="Burhan Shop" class="w-12 h-12 rounded-lg shadow-md"> 
+      <img src="https://i.gyazo.com/5eee0d5d04d129914d0cecb593bbc9fa.png" alt="Burhan Shop" class="w-12 h-12 rounded-lg shadow-md">
       <div>
         <h1 class="text-3xl font-bold">Burhan Shop</h1>
-        <p class="text-white/70">Tempatnya merchandise bola kece & orisinal.</p>
+        <p class="text-white/70">Tempatnya merchandise bola kece &amp; orisinal.</p>
       </div>
     </div>
 
+    <!-- Info grid -->
     <div class="grid sm:grid-cols-3 gap-4 mt-6 text-sm">
       <div class="bg-white/5 border border-white/10 rounded-xl p-4">
         <h5 class="font-semibold text-white/90">NPM</h5>
@@ -30,21 +32,41 @@
       </div>
     </div>
 
-    <div class="flex flex-wrap items-center gap-3 mt-6">
-      <a href="{% url 'main:create_product' %}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl
-         bg-emerald-500/90 hover:bg-emerald-500 transition shadow-lg shadow-emerald-900/30">
+    <!-- Actions (primary/secondary match) -->
+    <div class="mt-6 flex flex-wrap items-center gap-3">
+      <!-- PRIMARY: sama gaya dengan + Add Product -->
+      <button
+        onclick="openCreateModal()"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl
+               bg-emerald-500/90 hover:bg-emerald-500 transition
+               shadow-lg shadow-emerald-900/30">
+        <span class="text-sm font-semibold">+ Create Product by AJAX</span>
+      </button>
+
+      <!-- SECONDARY -->
+      <button id="refreshBtn"
+              class="inline-flex items-center gap-2 px-4 py-2 rounded-xl
+                     bg-white/10 hover:bg-white/20 border border-white/20 transition">
+        <span class="text-sm font-semibold">Refresh</span>
+      </button>
+
+      <!-- tombol existing -->
+      <a href="{% url 'main:create_product' %}"
+         class="inline-flex items-center gap-2 px-4 py-2 rounded-xl
+                bg-emerald-500/90 hover:bg-emerald-500 transition shadow-lg shadow-emerald-900/30">
         <span class="text-sm font-semibold">+ Add Product</span>
       </a>
 
-      <a href="{% url 'main:logout' %}" class="inline-flex px-4 py-2 rounded-xl
-         bg-white/10 hover:bg-white/20 border border-white/20 transition">
+      <a href="{% url 'main:logout' %}"
+         class="inline-flex px-4 py-2 rounded-xl
+                bg-white/10 hover:bg-white/20 border border-white/20 transition">
         <span class="text-sm font-semibold">Logout</span>
       </a>
 
       <span class="ml-auto text-white/70 text-sm">Sesi terakhir login: {{ last_login }}</span>
     </div>
 
-
+    <!-- Filter -->
     <div class="mt-6 flex flex-wrap gap-3">
       <a href="?filter=all" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition">
         All Products
@@ -55,75 +77,151 @@
     </div>
   </div>
 
-  {% if not product_list %}
-    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl p-10 text-center flex flex-col items-center justify-center">
-        <img src="{% static 'image/no-news.png' %}" alt="No Products Yet" class="w-32 h-32 mb-6 opacity-70">
-        <p class="text-white/80 text-lg mb-4">Belum ada produk pada Burhan Shop.</p>
-        <a href="{% url 'main:create_product' %}" class="inline-block mt-4 px-6 py-3 rounded-xl
-            bg-emerald-500/90 hover:bg-emerald-500 transition shadow-lg shadow-emerald-900/30 text-white font-semibold">
-            Tambah Produk Pertama
-        </a>
-    </div>
-  {% else %}
+  <!-- AJAX state containers -->
+  <div id="loading" class="bg-white/10 border border-white/20 rounded-2xl p-10 text-center hidden">
+    Loading products...
+  </div>
 
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {% for product in product_list %}
-      <div class="group bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl p-5
-                  hover:-translate-y-1 hover:shadow-2xl transition">
-        <a href="{% url 'main:show_product' product.id %}">
-          <h2 class="text-xl font-bold mb-2 group-hover:text-emerald-300 transition">
-            {{ product.name }}
-          </h2>
-        </a>
+  <div id="error" class="bg-red-500/20 border border-red-400 rounded-2xl p-6 hidden">
+    Gagal memuat data.
+  </div>
 
-        <p class="text-sm text-white/80">
-          <b>{{ product.get_category_display }}</b>
-          {% if product.is_featured %} | <b class="text-amber-300">Featured</b>{% endif %}
-          | <b>Size: {{ product.size }}</b>
-          | <b>Price: Rp{{ product.price }}</b>
-          | Views: {{ product.product_views }}
-          | Stock: {{ product.stock }}
-        </p>
+  <div id="empty" class="bg-white/10 border border-white/20 rounded-2xl p-10 text-center hidden">
+    <img src="{% static 'image/no-news.png' %}" class="w-28 h-28 mx-auto mb-4 opacity-80" alt="Empty">
+    <div class="text-white/80">Belum ada produk.</div>
+  </div>
 
-        {% if product.thumbnail %}
-          <div class="mt-4 overflow-hidden rounded-xl border border-white/20 bg-white/5">
-            <img src="{{ product.thumbnail }}" alt="thumbnail"
-                 class="w-full h-48 object-cover group-hover:scale-[1.02] transition">
-          </div>
-        {% endif %}
-
-        <p class="mt-4 text-white/80">
-          {{ product.description|truncatewords:25 }}...
-        </p>
-
-        {% if user.is_authenticated and product.user == user %}
-        <div class="mt-5 flex flex-wrap gap-3">
-          <a href="{% url 'main:show_product' product.id %}"
-             class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition">
-            Read More
-          </a>
-          <a href="{% url 'main:edit_product' product.pk %}"
-             class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition">
-            Edit
-          </a>
-          <a href="{% url 'main:delete_product' product.pk %}"
-             class="px-4 py-2 rounded-xl bg-red-500/80 hover:bg-red-500 text-white transition">
-            Delete
-          </a>
-        </div>
-        {% else %}
-        <div class="mt-5 flex flex-wrap gap-3">
-          <a href="{% url 'main:show_product' product.id %}"
-             class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition">
-            Read More
-          </a>
-        </div>
-        {% endif %}
-      </div>
-      {% endfor %}
-    </div>
-
-  {% endif %}
+  <div id="grid" class="hidden"></div>
 </div>
+
+<script>
+function getCookie(name) {
+  const v = document.cookie.split('; ').find(row => row.startsWith(name + '='));
+  return v ? decodeURIComponent(v.split('=')[1]) : null;
+}
+const CSRF = getCookie('csrftoken');
+
+const API_UPDATE_TMPL = "{% url 'main:api_update_product' '00000000-0000-0000-0000-000000000000' %}";
+const API_DELETE_TMPL = "{% url 'main:api_delete_product' '00000000-0000-0000-0000-000000000000' %}";
+const apiUpdate = id => API_UPDATE_TMPL.replace('00000000-0000-0000-0000-000000000000', id);
+const apiDelete = id => API_DELETE_TMPL.replace('00000000-0000-0000-0000-000000000000', id);
+
+const LIST_API = "{% url 'main:show_json' %}";
+const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+const DETAIL_URL_TMPL = "{% url 'main:show_product' '00000000-0000-0000-0000-000000000000' %}";
+const EDIT_URL_TMPL   = "{% url 'main:edit_product'   '00000000-0000-0000-0000-000000000000' %}";
+const DELETE_URL_TMPL = "{% url 'main:delete_product' '00000000-0000-0000-0000-000000000000' %}";
+
+function urlDetail(id){ return DETAIL_URL_TMPL.replace('00000000-0000-0000-0000-000000000000', id); }
+function urlEdit(id){   return EDIT_URL_TMPL.replace('00000000-0000-0000-0000-000000000000', id); }
+function urlDelete(id){ return DELETE_URL_TMPL.replace('00000000-0000-0000-0000-000000000000', id); }
+
+const grid = document.getElementById('grid');
+const elLoading = document.getElementById('loading');
+const elError = document.getElementById('error');
+const elEmpty = document.getElementById('empty');
+
+function showSection({loading=false, error=false, empty=false, gridshow=false}) {
+  elLoading.classList.toggle('hidden', !loading);
+  elError.classList.toggle('hidden', !error);
+  elEmpty.classList.toggle('hidden', !empty);
+  grid.classList.toggle('hidden', !gridshow);
+  if (gridshow) grid.className = 'grid gap-6 sm:grid-cols-2 lg:grid-cols-3';
+}
+
+function card(p) {
+  const detail = urlDetail(p.id);
+  const isOwner = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(p.user_id);
+  const art = document.createElement('article');
+  const category = (p.category || '').toString();
+  const featured = p.is_featured ? `<span class="ml-2 text-amber-300 font-semibold">Featured</span>` : '';
+  const thumb = p.thumbnail
+    ? `<img src="${DOMPurify.sanitize(p.thumbnail)}" alt="thumb" class="w-full h-48 object-cover rounded-xl">`
+    : '';
+
+  const ownerButtons = isOwner ? `
+    <div class="flex flex-wrap gap-2">
+    <button type="button"
+      class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 transition text-sm"
+      onclick='openEditModal(${JSON.stringify(p)})'>
+      Edit
+    </button>
+    <button type="button"
+      class="px-3 py-1.5 rounded-lg bg-red-500/80 hover:bg-red-500 text-white transition text-sm"
+      onclick="deleteProduct('${p.id}')">
+      Delete
+    </button>
+  </div>
+  ` : '';
+
+  art.className = 'relative cursor-pointer group bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl p-5 hover:-translate-y-1 hover:shadow-2xl transition';
+  art.innerHTML = `
+    <h2 class="text-xl font-bold mb-2 group-hover:text-emerald-300 transition">
+      <a href="${detail}" class="hover:underline">${DOMPurify.sanitize(p.name || 'Untitled')}</a>${featured}
+    </h2>
+    <p class="text-sm text-white/80">
+      <b>${DOMPurify.sanitize(category)}</b> |
+      <b>Size: ${DOMPurify.sanitize(p.size || '-')}</b> |
+      <b>Price: Rp${DOMPurify.sanitize(String(p.price || 0))}</b> |
+      Views: ${DOMPurify.sanitize(String(p.product_views || 0))} |
+      Stock: ${DOMPurify.sanitize(String(p.stock || 0))}
+    </p>
+    <div class="mt-4 overflow-hidden rounded-xl border border-white/20 bg-white/5">
+      <a href="${detail}" aria-label="Open product detail">${thumb}</a>
+    </div>
+    <p class="mt-4 text-white/80">${DOMPurify.sanitize(p.description || '')}</p>
+
+    <div class="pt-4 mt-4 border-t border-white/20 flex items-center justify-between gap-3">
+      <a href="${detail}"
+         class="px-3 py-1.5 rounded-lg bg-emerald-500/90 hover:bg-emerald-500 transition shadow-lg shadow-emerald-900/30 text-sm font-semibold">
+        Read More
+      </a>
+      ${ownerButtons}
+    </div>
+  `;
+
+  art.addEventListener('click', (e) => {
+    if (e.target.closest('a, button')) return;  
+  });
+
+  return art;
+}
+
+async function loadProducts() {
+  try {
+    showSection({ loading: true });
+    const res = await fetch(LIST_API, { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) throw new Error('bad status');
+    const data = await res.json();
+    grid.innerHTML = '';
+    if (!data || data.length === 0) { showSection({ empty: true }); return; }
+    data.forEach(p => grid.appendChild(card(p)));
+    showSection({ gridshow: true });
+  } catch (e) {
+    console.error(e);
+    showSection({ error: true });
+  }
+}
+
+document.getElementById('refreshBtn').addEventListener('click', loadProducts);
+document.addEventListener('productsChanged', loadProducts);
+loadProducts();
+
+(function(){
+    try {
+      const raw = sessionStorage.getItem('toast');
+      if (!raw) return;
+      const t = JSON.parse(raw);
+      if (typeof showToast === 'function') {
+        showToast(t.title || 'Info', t.message || '', t.type || 'normal');
+      }
+    } catch(e) {}
+    sessionStorage.removeItem('toast');
+  })();
+  
+</script>
+
+
 
 {% endblock content %}

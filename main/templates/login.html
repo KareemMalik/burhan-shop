@@ -11,7 +11,8 @@
     <h1 class="text-3xl font-bold mb-2">Login</h1>
     <p class="text-white/70 mb-6">Masuk ke akun Burhan Shop kamu.</p>
 
-    <form method="POST" action="" class="space-y-4">
+    <!-- Fallback action="" agar tetap jalan non-AJAX -->
+    <form id="loginForm" method="POST" action="" class="space-y-4">
       {% csrf_token %}
 
       <table class="w-full border-separate [border-spacing:0.75rem_0.75rem]">
@@ -19,7 +20,7 @@
         <tr>
           <td></td>
           <td>
-            <button type="submit"
+            <button id="loginSubmitBtn" type="submit"
               class="w-full mt-2 px-4 py-2 rounded-xl bg-emerald-500/90 hover:bg-emerald-500
                      text-white font-semibold shadow-lg shadow-emerald-900/30 transition">
               Login
@@ -48,4 +49,88 @@
   </div>
 </div>
 
+<!-- ===== AJAX Login Script (Progressive Enhancement) ===== -->
+<script>
+  // --- Helper ambil CSRF dari cookie (Django default) ---
+  function getCookie(name){
+    const v = document.cookie.split('; ').find(r => r.startsWith(name + '='));
+    return v ? decodeURIComponent(v.split('=')[1]) : null;
+  }
+  const CSRF = getCookie('csrftoken');
+
+  // URL endpoint login halaman ini (server akan balas JSON jika header AJAX)
+  const LOGIN_URL = "{% url 'main:login' %}";
+
+  const form = document.getElementById('loginForm');
+  const submitBtn = document.getElementById('loginSubmitBtn');
+
+  // Cegah double-submit
+  let busy = false;
+
+  form.addEventListener('submit', async (e) => {
+    // Progressive enhancement: jika fetch tidak tersedia, biarkan default submit
+    if (!window.fetch) return;
+
+    e.preventDefault();
+    if (busy) return;
+    busy = true;
+
+    // UI loading state kecil di tombol
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Signing in...';
+    submitBtn.disabled = true;
+    submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+
+    try {
+      const res = await fetch(LOGIN_URL, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': CSRF,
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json'
+        },
+        body: new FormData(form)
+      });
+ umum
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        const msg = (data && data.error) ? data.error : 'Login gagal. Periksa kembali username/password.';
+        if (typeof showToast === 'function') {
+          showToast('Login gagal', msg, 'error');
+        } else {
+          alert(msg);
+        }
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+        busy = false;
+        return;
+      }
+
+      // Sukses
+      if (typeof showToast === 'function') {
+        sessionStorage.setItem('toast', JSON.stringify({
+        title: 'Welcome!',
+        message: `Hi, ${data.username || ''}`,
+        type: 'success'
+}));
+window.location.href = data.redirect || "{% url 'main:show_main' %}";
+      }
+      const target = data.redirect || "{% url 'main:show_main' %}";
+      window.location.href = target;
+
+    } catch (err) {
+      if (typeof showToast === 'function') {
+        showToast('Login error', 'Koneksi bermasalah. Coba lagi.', 'error');
+      } else {
+        alert('Login error. Coba lagi.');
+      }
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+      busy = false;
+    }
+  });
+</script>
 {% endblock content %}

@@ -1,0 +1,140 @@
+{% load static %}
+<div id="crudModal"
+     class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+  <div id="crudModalContent"
+       class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl w-[90%] max-w-lg p-6 opacity-0 scale-95 transition transform">
+       
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-2xl font-bold text-white">Create Product</h3>
+      <button onclick="hideModal()"
+              class="text-white/70 hover:text-white transition text-2xl leading-none">✕</button>
+    </div>
+
+    <!-- Form -->
+    <form id="productForm" class="space-y-4">
+      <div class="space-y-3">
+        <input name="name" placeholder="Product Name" required
+               class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition">
+
+        <textarea name="description" placeholder="Description"
+                  class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"></textarea>
+
+        <input name="thumbnail" placeholder="Thumbnail URL (optional)"
+               class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition">
+
+        <div class="grid grid-cols-2 gap-3">
+          <input type="number" name="price" placeholder="Price"
+                 class="bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition">
+          <input type="number" name="stock" placeholder="Stock"
+                 class="bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition">
+          <input name="size" placeholder="Size (e.g. M)"
+                 class="bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition">
+          <select name="category" required
+                  class="bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 transition">
+            <option value="jersey" class="text-gray-900">Jersey</option>
+            <option value="football shoes" class="text-gray-900">Football Shoes</option>
+            <option value="training gear" class="text-gray-900">Training Gear</option>
+            <option value="training jacket" class="text-gray-900">Training Jacket</option>
+            <option value="accessories" class="text-gray-900">Accessories</option>
+            <option value="equipments" class="text-gray-900">Equipments</option>
+          </select>
+        </div>
+
+        <label class="inline-flex items-center gap-2 text-sm text-white/80">
+          <input type="checkbox" name="is_featured"
+                 class="accent-emerald-500 rounded">
+          Featured Product
+        </label>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-end gap-3 pt-4 border-t border-white/10">
+        <button type="button"
+                onclick="hideModal()"
+                class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white/90 transition">
+          Cancel
+        </button>
+
+        <button type="submit"
+                class="px-5 py-2.5 rounded-xl bg-emerald-500/90 hover:bg-emerald-500 text-white font-semibold shadow-lg shadow-emerald-900/30 transition">
+          Publish
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function showModal() {
+    const m = document.getElementById('crudModal');
+    const c = document.getElementById('crudModalContent');
+    m.classList.remove('hidden');
+    setTimeout(() => {
+      c.classList.remove('opacity-0', 'scale-95');
+      c.classList.add('opacity-100', 'scale-100');
+    }, 10);
+  }
+
+  function hideModal() {
+    const m = document.getElementById('crudModal');
+    const c = document.getElementById('crudModalContent');
+    c.classList.remove('opacity-100', 'scale-100');
+    c.classList.add('opacity-0', 'scale-95');
+    setTimeout(() => { m.classList.add('hidden'); }, 150);
+  }
+
+  document.getElementById('productForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const url = EDIT_ID ? apiUpdate(EDIT_ID) : "{% url 'main:add_product_ajax' %}";
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { 'X-CSRFToken': CSRF },
+    body: fd
+  });
+  const ok = res.ok;
+  hideModal(); e.target.reset();
+  if (ok) {
+    showToast(EDIT_ID ? 'Product updated' : 'Product created', 'Berhasil disimpan', 'success');
+    EDIT_ID = null;
+    document.dispatchEvent(new CustomEvent('productsChanged'));
+  } else {
+    showToast('Failed', 'Gagal menyimpan data', 'error');
+  }
+});
+
+
+function openCreateModal() {
+  EDIT_ID = null;
+  document.getElementById('productForm').reset();
+  showModal();
+}
+
+async function openEditModal(p) {
+  EDIT_ID = p.id;
+  const f = document.getElementById('productForm');
+  f.name.value = p.name || '';
+  f.description.value = p.description || '';
+  f.thumbnail.value = p.thumbnail || '';
+  f.price.value = p.price || 0;
+  f.stock.value = p.stock || 0;
+  f.size.value = p.size || '';
+  f.category.value = p.category || 'jersey';
+  f.is_featured.checked = !!p.is_featured;
+  showModal();
+}
+
+async function deleteProduct(id){
+  if(!confirm('Yakin mau hapus produk ini?')) return;
+  const res = await fetch(apiDelete(id), { method: 'POST', headers: { 'X-CSRFToken': CSRF } });
+  if(res.ok){
+    showToast('Product deleted', 'Produk dihapus', 'success');
+    document.dispatchEvent(new CustomEvent('productsChanged'));
+  } else {
+    showToast('Failed', 'Gagal menghapus', 'error');
+  }
+}
+
+
+</script>

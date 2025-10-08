@@ -11,9 +11,10 @@
     <h1 class="text-3xl font-bold mb-2">Register</h1>
     <p class="text-white/70 mb-6">Buat akun untuk mulai belanja di Burhan Shop.</p>
 
-    <form method="POST" class="space-y-4">
+    <!-- Fallback action="" agar tetap jalan non-AJAX -->
+    <form id="registerForm" method="POST" action="" class="space-y-4">
       {% csrf_token %}
-      
+
       {% for field in form %}
         <div>
           <label for="{{ field.id_for_label }}" class="block mb-1 text-white/90 font-medium">
@@ -29,7 +30,7 @@
         </div>
       {% endfor %}
 
-      <button type="submit"
+      <button id="registerSubmitBtn" type="submit"
         class="w-full mt-4 px-4 py-2 rounded-xl bg-emerald-500/90 hover:bg-emerald-500
                text-white font-semibold shadow-lg shadow-emerald-900/30 transition">
         Daftar
@@ -54,4 +55,80 @@
     </div>
   </div>
 </div>
+
+<!-- ===== AJAX Register Script (Progressive Enhancement) ===== -->
+<script>
+  // Ambil CSRF token dari cookie (Django default)
+  function getCookie(name){
+    const v = document.cookie.split('; ').find(r => r.startsWith(name + '='));
+    return v ? decodeURIComponent(v.split('=')[1]) : null;
+  }
+  const CSRF = getCookie('csrftoken');
+
+  // URL endpoint register halaman ini (view akan balas JSON jika header AJAX)
+  const REGISTER_URL = "{% url 'main:register' %}";
+
+  const form = document.getElementById('registerForm');
+  const submitBtn = document.getElementById('registerSubmitBtn');
+
+  let busy = false;
+
+  form.addEventListener('submit', async (e) => {
+    if (!window.fetch) return;
+
+    e.preventDefault();
+    if (busy) return;
+    busy = true;
+
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Mendaftarkan...';
+    submitBtn.disabled = true;
+    submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+
+    try {
+      const res = await fetch(REGISTER_URL, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': CSRF,
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json'
+        },
+        body: new FormData(form)
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        const msg = (data && data.error) ? data.error : 'Registrasi gagal. Periksa kembali isian form.';
+        if (typeof showToast === 'function') {
+          showToast('Registrasi gagal', msg, 'error');
+        } else {
+          alert(msg);
+        }
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+        busy = false;
+        return;
+      }
+
+      if (typeof showToast === 'function') {
+        showToast('Registrasi berhasil', `User ${data.username || ''} dibuat`, 'success');
+      }
+      const target = data.redirect || "{% url 'main:login' %}";
+      window.location.href = target;
+
+    } catch (err) {
+      if (typeof showToast === 'function') {
+        showToast('Error', 'Koneksi bermasalah. Coba lagi.', 'error');
+      } else {
+        alert('Error koneksi. Coba lagi.');
+      }
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+      busy = false;
+    }
+  });
+</script>
 {% endblock content %}

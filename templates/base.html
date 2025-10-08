@@ -10,5 +10,8 @@
     <link rel="stylesheet" href="{% static 'css/global.css' %}"/>
 <body class="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-emerald-900 text-white antialiased">
     {% block content %} {% endblock content %}
+    {% include 'toast.html' %}
+    {% include 'modal.html' %}
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
 </body>
 </html>

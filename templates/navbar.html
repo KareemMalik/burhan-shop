@@ -19,7 +19,7 @@
       <div class="hidden md:flex items-center gap-4 text-white">
         <div class="flex flex-col text-right">
           <span class="font-semibold">{{ request.user.username }}</span>
-          <span class="text-sm opacity-80">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</span>
+          <span class="text-sm opacity-80">{{ npm }} - {{ class }}</span>
         </div>
         <a href="{% url 'main:logout' %}" class="px-3 py-1 rounded-lg bg-green-600 hover:bg-green-700 text-white transition">Logout</a>
       </div>
@@ -45,7 +45,7 @@
       <div class="flex items-center justify-between px-5">
         <div class="text-left">
           <div class="text-base font-medium leading-none text-white">{{ request.user.username }}</div>
-          <div class="text-sm font-medium leading-none text-gray-300">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
+          <div class="text-sm font-medium leading-none text-gray-300">{{ npm }} - {{ class }}</div>
         </div>
         <a href="{% url 'main:logout' %}" 
           class="flex-shrink-0 px-3 py-1.5 rounded-lg text-sm bg-green-600 hover:bg-green-700 text-white transition">
