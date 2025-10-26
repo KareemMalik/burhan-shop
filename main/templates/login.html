@@ -49,7 +49,6 @@
   </div>
 </div>
 
-<!-- ===== AJAX Login Script (Progressive Enhancement) ===== -->
 <script>
   // --- Helper ambil CSRF dari cookie (Django default) ---
   function getCookie(name){
@@ -58,24 +57,22 @@
   }
   const CSRF = getCookie('csrftoken');
 
-  // URL endpoint login halaman ini (server akan balas JSON jika header AJAX)
+ 
   const LOGIN_URL = "{% url 'main:login' %}";
 
   const form = document.getElementById('loginForm');
   const submitBtn = document.getElementById('loginSubmitBtn');
 
-  // Cegah double-submit
+ 
   let busy = false;
 
   form.addEventListener('submit', async (e) => {
-    // Progressive enhancement: jika fetch tidak tersedia, biarkan default submit
     if (!window.fetch) return;
 
     e.preventDefault();
     if (busy) return;
     busy = true;
 
-    // UI loading state kecil di tombol
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Signing in...';
     submitBtn.disabled = true;
@@ -107,7 +104,6 @@
         return;
       }
 
-      // Sukses
       if (typeof showToast === 'function') {
         sessionStorage.setItem('toast', JSON.stringify({
         title: 'Welcome!',

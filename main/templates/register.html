@@ -56,16 +56,13 @@
   </div>
 </div>
 
-<!-- ===== AJAX Register Script (Progressive Enhancement) ===== -->
 <script>
-  // Ambil CSRF token dari cookie (Django default)
   function getCookie(name){
     const v = document.cookie.split('; ').find(r => r.startsWith(name + '='));
     return v ? decodeURIComponent(v.split('=')[1]) : null;
   }
   const CSRF = getCookie('csrftoken');
 
-  // URL endpoint register halaman ini (view akan balas JSON jika header AJAX)
   const REGISTER_URL = "{% url 'main:register' %}";
 
   const form = document.getElementById('registerForm');
