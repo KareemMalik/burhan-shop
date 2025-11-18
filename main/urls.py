@@ -33,4 +33,8 @@ urlpatterns = [
     path('api/auth/login/', views.api_login, name='api_login'),
     path('api/auth/register/', views.api_register, name='api_register'),
     path('api/auth/logout/', views.api_logout, name='api_logout'),
+
+    # ===== Flutter endpoints =====
+    path('proxy-image/', views.proxy_image, name='proxy_image'),
+    path('create-flutter/', views.create_product_flutter, name='create_product_flutter'),
 ]
